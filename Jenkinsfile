@@ -1,13 +1,12 @@
-
 pipeline {
     agent any
-    
+
     stages {
         stage('Checkout') {
             steps {
-        // Checkout your source code from Git
-        checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://your-git-repo-url.git']]])
-    }
+                // Checkout your source code from Git
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/mohamedalimouldi/devopsBackend.git']]])
+            }
         }
         
         stage('Build') {
@@ -24,7 +23,4 @@ pipeline {
             }
         }
     }
-    
 }
-
-
