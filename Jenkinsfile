@@ -12,14 +12,7 @@ pipeline {
         stage('Build') {
             steps {
                 // Build the Maven project
-                sh 'mvn clean package'
-            }
-        }
-        
-        stage('Unit Tests') {
-            steps {
-                // Execute unit tests using Maven
-                sh 'mvn test'
+                sh 'mvn clean install'
             }
         }
     }
