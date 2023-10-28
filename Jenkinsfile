@@ -8,19 +8,10 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn clean install'
             }
         }
-        stage('Test') {
-            steps {
-                sh 'mvn test' // Modify the test command as needed
-            }
-            post {
-                always {
-                    // Archive test results for Jenkins to display
-                    junit '**/target/surefire-reports/*.xml'
-                }
-            }
-        }
+        
+        
     }
 }
