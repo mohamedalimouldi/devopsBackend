@@ -1,18 +1,19 @@
 pipeline {
     agent any
-
-    stages {
-        stage('Checkout') {
-            steps {
-                // Checkout your source code from Git
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/mohamedalimouldi/devopsBackend.git']]])
-            }
-        }
-        
+    stages {    
         stage('Build') {
             steps {
-                // Build the Maven project
-                sh 'mvn clean install'
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Run tests and collect test results
+                sh 'mvn test' // Modify the test command as needed
+
+                // Archive test results for Jenkins to display
+                junit '**/target/surefire-reports/*.xml'
             }
         }
     }
