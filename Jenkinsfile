@@ -1,16 +1,42 @@
 pipeline {
-    agent any
-    stages {
-        stage('Test') {
-            steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    // Run tests and collect test results
-                    sh 'mvn test' // Modify the test command as needed
-
-                    // Archive test results for Jenkins to display
-                    junit '**/target/surefire-reports/*.xml'
-                }
-            }
-        }
+  // This pipeline requires the following plugins:
+  // * Git: https://plugins.jenkins.io/git/
+  // * Workflow Aggregator: https://plugins.jenkins.io/workflow-aggregator/
+  // * MSTest: https://plugins.jenkins.io/mstest/
+  agent 'any'
+  stages {
+    stage('Environment') {
+      steps {
+          echo "PATH = ${PATH}"
+      }
     }
+    stage('Checkout') {
+      steps {
+
+        script {
+            checkout([$class: 'GitSCM', branches: [[name: '*/master']], userRemoteConfigs: [[url: 'https://github.com/mohamedalimouldi/devopsBackend.git']]])
+        }
+      }
+    }
+    stage('Dependencies') {
+      steps {
+        sh(script: 'dotnet restore')
+      }
+    }
+    stage('Build') {
+      steps {
+        sh(script: 'dotnet build --configuration Release', returnStdout: true)
+      }
+    }
+    stage('Test') {
+      steps {
+        sh(script: 'dotnet test -l:trx || true')        
+      }
+    }
+  }
+  post {
+    always {
+      mstest(testResultsFile: '**/*.trx', failOnError: false, keepLongStdio: true)
+    }
+  }
 }
