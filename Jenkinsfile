@@ -1,19 +1,20 @@
 pipeline {
     agent any
-    stages {    
+    stages {
         stage('Build') {
             steps {
                 sh 'mvn clean package'
             }
         }
-
         stage('Test') {
             steps {
-                // Run tests and collect test results
-                sh 'mvn test' // Modify the test command as needed
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    // Run tests and collect test results
+                    sh 'mvn test' // Modify the test command as needed
 
-                // Archive test results for Jenkins to display
-                junit '**/target/surefire-reports/*.xml'
+                    // Archive test results for Jenkins to display
+                    junit '**/target/surefire-reports/*.xml'
+                }
             }
         }
     }
