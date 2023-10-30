@@ -100,7 +100,7 @@ pipeline {
         script {
             echo "connexion"
               def dockerUsername ="dalidas" 
-              def dockerPassword = "13121998dli"
+              def dockerPassword = "13121998dali"
             sh " docker login -u ${dockerUsername} -p ${dockerPassword} " 
             echo "Building Docker image..."
              sh "docker build -t devopsBackend:latest ." 
