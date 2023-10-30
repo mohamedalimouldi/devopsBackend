@@ -1,27 +1,32 @@
 pipeline {
     agent any
+
     environment {
         NEXUS_VERSION = "nexus3"
         NEXUS_PROTOCOL = "http"
-        NEXUS_URL = "192.168.249.128:8081"   
+        NEXUS_URL = "192.168.249.128:8081"
     }
+
     stages {
         stage('Checkout Backend code') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/mohamedalimouldi/devopsBackend.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/mohamedalimouldi/devopsBackend.git']])
             }
         }
+
         stage('Build') {
             steps {
                 sh 'mvn clean package'
             }
         }
+
         stage('Test') {
             steps {
                 sh 'mvn test' // Modify the test command as needed
                 junit '**/target/surefire-reports/*.xml'
             }
         }
+
         stage("Create SonarQube Project") {
             steps {
                 script {
@@ -35,6 +40,7 @@ pipeline {
                 }
             }
         }
+
         stage("Run SonarQube Analysis") {
             steps {
                 script {
@@ -54,17 +60,19 @@ pipeline {
                 }
             }
         }
+
         stage("Publish to Nexus Repository Manager") {
             steps {
                 script {
-                     def nexusRepository = "Devops_Project"
-                    pom = readMavenPom file: "pom.xml";
-                    filesByGlob = findFiles(glob: "target/*.${pom.packaging}");
+                    def nexusRepository = "Devops_Project"
+                    pom = readMavenPom file: "pom.xml"
+                    filesByGlob = findFiles(glob: "target/*.${pom.packaging}")
                     echo "${filesByGlob[0].name} ${filesByGlob[0].path} ${filesByGlob[0].directory} ${filesByGlob[0].length} ${filesByGlob[0].lastModified}"
-                    artifactPath = filesByGlob[0].path;
-                    artifactExists = fileExists artifactPath;
-                    if(artifactExists) {
-                        echo "* File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
+                    artifactPath = filesByGlob[0].path
+                    artifactExists = fileExists artifactPath
+
+                    if (artifactExists) {
+                        echo "* File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}"
                         nexusArtifactUploader(
                             nexusVersion: NEXUS_VERSION,
                             protocol: NEXUS_PROTOCOL,
@@ -72,46 +80,26 @@ pipeline {
                             groupId: pom.groupId,
                             version: pom.version,
                             repository: nexusRepository,
-                            credentialsId:'nexus-cred' ,
+                            credentialsId: 'nexus-cred',
                             artifacts: [
-                                [artifactId: pom.artifactId,
-                                classifier: '',
-                                file: artifactPath,
-                                type: pom.packaging],
-                                [artifactId: pom.artifactId,
-                                classifier: '',
-                                file: "pom.xml",
-                                type: "pom"]
+                                [artifactId: pom.artifactId, classifier: '', file: artifactPath, type: pom.packaging],
+                                [artifactId: pom.artifactId, classifier: '', file: "pom.xml", type: "pom"]
                             ]
-                            
-                        );
-                 
+                        )
+                    } else {
+                        error "* File: ${artifactPath}, could not be found"
                     }
-                    else {
-                        error "* File: ${artifactPath}, could not be found";
-                    }
-                    }
-                  }
-                    
                 }
-        stage('Build image spring') {
-                                                           steps {
-                                                               script {
-                                                                   // Build the Docker image for the Spring Boot app
-                                                                   sh "docker build -t $DOCKER_IMAGE_Back_NAME ."
-                                                               }
-                                                           }
-                                                       }
+            }
+        }
 
-                                                       stage('Push image spring') {
-                                                           steps {
-                                                               script {
-                                                                   withDockerRegistry([credentialsId: 'docker_hub',url: ""]) {
-                                                                       // Push the Docker image to Docker Hub
-                                                                       sh "docker push $DOCKER_IMAGE_Back_NAME"
-                                                                   }
-                                                               }
-                                                           }
-                                                           }
+        stage('Build image spring') {
+            steps {
+                script {
+                    // Build the Docker image for the Spring Boot app
+                    sh "docker build -t dalidas/devops_backend ."
+                }
+            }
+        }
     }
 }
