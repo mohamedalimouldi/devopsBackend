@@ -20,7 +20,7 @@ pipeline {
         stage("Create SonarQube Project") {
             steps {
                 script {
-                    def sonarServerUrl = "http://192.168.249.1128:9000"
+                    def sonarServerUrl = "http://192.168.249.128:9000/"
                     def projectName = "devopsBackend"
                     def projectKey = "devopsBackend"
 
