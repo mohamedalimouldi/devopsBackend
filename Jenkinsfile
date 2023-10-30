@@ -23,7 +23,7 @@ pipeline {
         stage('sonar quality check') {
             steps {
                 script {
-                    withSonarQubeEnv(credentialsId: 'sonarserver') {
+                    withSonarQubeEnv(credentialsId: 'sonartoken') {
                         sh 'mvn sonar:sonar'
                     }
                     timeout(time: 1, unit: 'HOURS') {
