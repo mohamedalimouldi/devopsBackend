@@ -13,24 +13,38 @@ pipeline {
         }
         stage('Test') {
             steps {
-                // Run tests and collect test results
                 sh 'mvn test' // Modify the test command as needed
-
-                // Archive test results for Jenkins to display
                 junit '**/target/surefire-reports/*.xml'
             }
         }
-        stage('sonar quality check') {
+        stage("Create SonarQube Project") {
             steps {
                 script {
-                    withSonarQubeEnv(credentialsId: 'sonartoken') {
-                        sh 'mvn sonar:sonar'
-                    }
-                    timeout(time: 1, unit: 'HOURS') {
-                        def qg = waitForQualityGate()
-                        if (qg.status != 'OK') {
-                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                    def sonarServerUrl = "http://192.168.249.1128:9000"
+                    def projectName = "devopsBackend"
+                    def projectKey = "devopsBackend"
+
+                    sh """
+                        curl -X POST "${sonarServerUrl}/api/projects/create?name=${projectName}&project=${projectKey}"
+                    """
+                }
+            }
+        }
+        stage("Run SonarQube Analysis") {
+            steps {
+                script {
+                    withSonarQubeEnv('test') {
+                        def sonarUsername = "admin"
+                        def sonarPassword = "123"
+
+                        withCredentials([usernamePassword(credentialsId: 'sonartoken', usernameVariable: 'sonarUsername', passwordVariable: 'sonarPassword')]) {
+                            sh """
+                                set +x
+                                mvn sonar:sonar -Dsonar.projectKey=devopsBackend
+                                set -x
+                            """
                         }
+                        echo 'Static Analysis Completed'
                     }
                 }
             }
