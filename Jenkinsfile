@@ -1,26 +1,22 @@
 pipeline {
     agent any
-
     stages {
-        stage('Checkout') {
+        stage('Checkout Backend code') {
             steps {
-                // Checkout your source code from Git
                 checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/mohamedalimouldi/devopsBackend.git']]])
             }
         }
-        
         stage('Build') {
             steps {
-                // Build the Maven project
-                sh 'mvn clean package'
+                sh 'mvn clean'
             }
         }
-        
-        stage('Unit Tests') {
+        stage('test'){
             steps {
-                // Execute unit tests using Maven
                 sh 'mvn test'
             }
         }
+        
+        
     }
 }
