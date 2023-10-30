@@ -8,7 +8,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'sudo sudo /usr/bin/mvn clean install'
+                sh 'sudo /usr/bin/mvn clean install'
             }
         }
         
