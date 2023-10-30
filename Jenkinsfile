@@ -93,13 +93,25 @@ pipeline {
             }
         }
 
-        stage('Build image spring') {
-            steps {
-                script {
-                    // Build the Docker image for the Spring Boot app
-                    sh "docker build -t dalidas/devops_backend ."
-                }
-            }
+               
+                 stage("Build and Push Docker Image") {
+        
+    steps {
+        script {
+            echo "connexion"
+              def dockerUsername ="dalidas" 
+              def dockerPassword = "13121998dli"
+            sh " docker login -u ${dockerUsername} -p ${dockerPassword} " 
+            echo "Building Docker image..."
+             sh "docker build -t devopsBackend:latest ." 
+            echo "renommer l'image"
+             sh "docker tag devopsBackend:latest dalidas/backend-app"
+            echo "Pushing Docker image to Docker Hub..."
+             sh "docker push dalidas/backend-app:latest"
+            echo "Docker image successfully pushed to Docker Hub."
         }
+    }
+        
+    }
     }
 }
