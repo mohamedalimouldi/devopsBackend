@@ -33,7 +33,7 @@ pipeline {
         stage("Run SonarQube Analysis") {
             steps {
                 script {
-                    withSonarQubeEnv('test') {
+                    withSonarQubeEnv('sonrserver') {
                         def sonarUsername = "admin"
                         def sonarPassword = "123"
 
