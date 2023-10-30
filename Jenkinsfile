@@ -37,7 +37,7 @@ pipeline {
                         def sonarUsername = "admin"
                         def sonarPassword = "123"
 
-                        withCredentials([usernamePassword(credentialsId: 'sonartoken', usernameVariable: 'sonarUsername', passwordVariable: 'sonarPassword')]) {
+                        withSonarQubeEnv(credentialsId: 'sonartoken') {
                             sh """
                                 set +x
                                 mvn sonar:sonar -Dsonar.projectKey=devopsBackend
