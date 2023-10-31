@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    tools {
+    nodejs 'node'
+    }
+
 
     environment {
         NEXUS_VERSION = "nexus3"
@@ -13,7 +17,7 @@ pipeline {
         NEXUS_REPOSITORY = "Devops_Project"
         DOCKER_IMAGE_NAME = "dalidas/springboot_devops:latest"
         DOCKER_FRONT_IMAGE_NAME = "dalidas/devops_angular:latest"
-	NODE_VERSION = '16.14.0'
+	
     }
 
     stages {
@@ -41,16 +45,7 @@ pipeline {
                 checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/mohamedalimouldi/devopsFront.git']]])
             }
         }
-	stage('Install Node.js') {
-            steps {
-                script {
-                    def nodeHome = tool name: 'Node.js', type: 'Tool Installations'
-                    def nodeBin = "${nodeHome}/bin"
-                    env.PATH = "${nodeBin}:${env.PATH}"
-                    sh "nvm install ${NODE_VERSION}"
-                }
-            }
-        }
+	
 
         stage('Build Angular') {
             steps {
@@ -59,6 +54,21 @@ pipeline {
                     sh 'npm install'
                     sh 'npm install -g @angular/cli'
                     sh 'ng build '
+                }
+            }
+        }
+
+        stage('Build image Angular') {
+            steps {
+                sh "docker build -t ${DOCKER_FRONT_IMAGE_NAME} ."
+            }
+        }
+
+        stage('Push image Angular') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                    sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+                    sh "docker push ${DOCKER_IMAGE_NAME}"
                 }
             }
         }
