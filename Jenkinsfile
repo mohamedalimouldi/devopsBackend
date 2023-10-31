@@ -50,10 +50,8 @@ pipeline {
         stage('Build Angular') {
             steps {
                 dir('frontend') {
-                    sh 'npm version'
                     sh 'npm install'
-                    sh 'npm install -g @angular/cli'
-                    sh 'ng build '
+                    sh 'npm run build '
                 }
             }
         }
