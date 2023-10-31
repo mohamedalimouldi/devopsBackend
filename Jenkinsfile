@@ -108,5 +108,6 @@ pipeline {
           sh 'docker push dalidas/springboot_devops:latest'
         }
       }
+        }
     }
 }
