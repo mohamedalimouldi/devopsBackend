@@ -13,6 +13,7 @@ pipeline {
         NEXUS_REPOSITORY = "Devops_Project"
         DOCKER_IMAGE_NAME = "dalidas/springboot_devops:latest"
         DOCKER_FRONT_IMAGE_NAME = "dalidas/devops_angular:latest"
+	NODE_VERSION = '16.14.0'
     }
 
     stages {
@@ -38,6 +39,16 @@ pipeline {
         stage('Checkout Frontend code') {
             steps {
                 checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/mohamedalimouldi/devopsFront.git']]])
+            }
+        }
+	stage('Install Node.js') {
+            steps {
+                script {
+                    def nodeHome = tool name: 'Node.js', type: 'Tool Installations'
+                    def nodeBin = "${nodeHome}/bin"
+                    env.PATH = "${nodeBin}:${env.PATH}"
+                    sh "nvm install ${NODE_VERSION}"
+                }
             }
         }
 
