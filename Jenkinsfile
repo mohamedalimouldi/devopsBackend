@@ -24,17 +24,15 @@ pipeline {
                 checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/mohamedalimouldi/devopsBackend.git']]])
             }
         }
-
-        stage('Build') {
+	stage('Test') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn clean test'
             }
         }
 
-        stage('Test') {
+        stage('Build') {
             steps {
-                sh 'mvn test'
-                junit '*/target/surefire-reports/.xml'
+                sh 'mvn clean install'
             }
         }
 	stage("Create SonarQube Project") {
