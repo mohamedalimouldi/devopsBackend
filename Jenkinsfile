@@ -17,7 +17,8 @@ pipeline {
         DOCKER_FRONT_IMAGE_NAME = "dalidas/devops_angular:latest"
 	
     }
-
+	stages {
+        
     
 
         stage('Checkout Frontend code') {
