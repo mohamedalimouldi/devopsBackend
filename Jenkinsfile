@@ -26,14 +26,13 @@ pipeline {
             steps {
 		
                 sh 'mvn clean install'
-		junit '/target/surefire-reports/*.xml'
 		    
             }
         }
 	stage('Test') {
             steps {
                 sh 'mvn test'
-                junit '*/target/surefire-reports/.xml'
+                junit '/target/surefire-reports/*.xml'
             }
         }
 
