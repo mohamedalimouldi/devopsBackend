@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    
+
+
     environment {
         NEXUS_VERSION = "nexus3"
         NEXUS_PROTOCOL = "http"
@@ -22,21 +25,19 @@ pipeline {
             }
         }
 
-        stage(' Build spring boot') {
+        stage('Build') {
             steps {
-		
-                sh 'mvn clean install'
-		    
-            }
-        }
-	stage('Test') {
-            steps {
-                sh 'mvn test'
-                junit '/target/surefire-reports/*.xml'
+                sh 'mvn clean package'
             }
         }
 
-	    stage("Create SonarQube Project") {
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+                junit '*/target/surefire-reports/.xml'
+            }
+        }
+	stage("Create SonarQube Project") {
             steps {
                 script {
                     def sonarServerUrl = "http://192.168.249.128:9000/"
@@ -148,6 +149,5 @@ pipeline {
             }
         }
 
-	
     }
 }
