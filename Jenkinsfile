@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    
+
 
 
     environment {
@@ -15,18 +15,38 @@ pipeline {
         NEXUS_REPOSITORY = "Devops_Project"
         DOCKER_IMAGE_NAME = "dalidas/springboot_devops:latest"
         DOCKER_FRONT_IMAGE_NAME = "dalidas/devops_angular:latest"
-	
+
     }
-	stages {
-        
-    
+
+    stages {
+@@ -22,13 +33,11 @@ pipeline {
+
+        stage('Test') {
+            steps {
+                sh 'mvn test' // Modify the test command as needed
+                sh 'mvn test'
+                junit '**/target/surefire-reports/*.xml'
+            }
+        }
+
+
+        stage("Create SonarQube Project") {
+	stage("Create SonarQube Project") {
+            steps {
+                script {
+                    def sonarServerUrl = "http://192.168.249.128:9000/"
+@@ -108,12 +117,37 @@ pipeline {
+          sh 'docker push dalidas/springboot_devops:latest'
+        }
+      }
+        }    
 
         stage('Checkout Frontend code') {
             steps {
                 checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/mohamedalimouldi/devopsFront.git']]])
             }
         }
-	
+
 
         stage('Build Angular') {
             steps {
@@ -50,6 +70,7 @@ pipeline {
                 }
             }
         }
+
 
     }
 }
