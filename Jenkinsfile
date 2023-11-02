@@ -22,13 +22,18 @@ pipeline {
             }
         }
 
-        stage('Test and Build spring boot') {
+        stage(' Build spring boot') {
             steps {
-		sh 'mvn clean test'
-		echo 'Test Done Succesfully'
+		
                 sh 'mvn clean install'
-		junit '*/target/surefire-reports/.xml'
+		junit '/target/surefire-reports/*.xml'
 		    
+            }
+        }
+	stage('Test') {
+            steps {
+                sh 'mvn test'
+                junit '*/target/surefire-reports/.xml'
             }
         }
 
