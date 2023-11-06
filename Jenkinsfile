@@ -35,14 +35,11 @@ pipeline {
                     }
 
     }
-	 post {
-    always {
-        script {
-            try {
-                emailext subject: 'Build Notification', body: 'The build was successful', recipientProviders: [[$class: 'CulpritsRecipientProvider']]
-            } catch (Exception e) {
-                echo "Error sending email: ${e.getMessage()}"
-            }
+	post{
+        always{
+            mail to: "medalimouldi.1@gmail.com",
+            subject: "Test Email",
+            body: "Test"
         }
     }
 }
