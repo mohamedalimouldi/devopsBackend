@@ -2,7 +2,6 @@ pipeline {
     agent any
     
 
-
     environment {
         NEXUS_VERSION = "nexus3"
         NEXUS_PROTOCOL = "http"
@@ -30,7 +29,7 @@ pipeline {
         
 	      stage('Deploy application with monitoring') {
                         steps {
-                          sh '/usr/bin/docker-compose -f docker-compose.yaml up -d'  // Use -d to run containers in the background
+                          sh 'docker-compose up -d'  // Use -d to run containers in the background
                             
                         }
                     }
