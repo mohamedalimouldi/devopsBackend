@@ -35,4 +35,24 @@ pipeline {
                     }
 
     }
+	 post {
+        success {
+
+             emailext subject: 'Successful Build Notification',
+                body: 'The Jenkins pipeline build was successful.',
+                to: 'mouldi.mohamedali@esprit.tn',
+                from: 'mouldi.mouhamed.ali@gmail.com'
+            echo 'Build successful!'
+        }
+
+        failure {
+
+             emailext subject: 'Failed Build Notification',
+                body: 'The Jenkins pipeline build failed. Please investigate.',
+                to: 'mouldi.mohamedali@esprit.tn',
+                from: 'mouldi.mouhamed.ali@gmail.com'
+            echo 'Build failed. Please investigate.'
+        }
+
+    }
 }
