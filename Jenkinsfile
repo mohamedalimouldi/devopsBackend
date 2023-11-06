@@ -32,7 +32,7 @@ pipeline {
                         steps {
                             
 
-                                    sh '/usr/bin/docker-compose -f docker-compose.yml up -d'  
+                                    sh 'docker-compose.yml up -d'  
                             
                         }
                     }
