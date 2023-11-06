@@ -36,23 +36,15 @@ pipeline {
 
     }
 	 post {
-        success {
-
-             emailext subject: 'Successful Build Notification',
-                body: 'The Jenkins pipeline build was successful.',
-                to: 'mouldi.mouhamed.ali@gmail.com',
-                from: 'mouldi.mouhamed.ali@gmail.com'
-            echo 'Build successful!'
+    always {
+        script {
+            try {
+                emailext subject: 'Build Notification', body: 'The build was successful', recipientProviders: [[$class: 'CulpritsRecipientProvider']]
+            } catch (Exception e) {
+                echo "Error sending email: ${e.getMessage()}"
+            }
         }
-
-        failure {
-
-             emailext subject: 'Failed Build Notification',
-                body: 'The Jenkins pipeline build failed. Please investigate.',
-                to: 'mouldi.mouhamed.ali@gmail.com',
-                from: 'mouldi.mouhamed.ali@gmail.com'
-            echo 'Build failed. Please investigate.'
-        }
-
     }
+}
+
 }
