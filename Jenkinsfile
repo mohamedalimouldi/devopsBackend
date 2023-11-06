@@ -36,10 +36,10 @@ pipeline {
 
     }
 	post{
-        always{
+        success{
             mail to: "medalimouldi.1@gmail.com",
             subject: "Test Email",
-            body: "Test"
+            body: "pipline jenkins build succesful "
         }
     }
 	
