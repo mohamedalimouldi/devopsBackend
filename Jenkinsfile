@@ -32,7 +32,7 @@ pipeline {
                         steps {
                             
 
-                                    sh 'docker-compose.yml up -d'  
+                                    sh '/home/dali/Desktop/docker-compose up -d'  
                             
                         }
                     }
